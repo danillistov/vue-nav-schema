@@ -65,8 +65,6 @@ describe('buildTree', () => {
 
     const result = buildTree(items);
 
-    console.log(result);
-
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('users');
     expect(result[0].children).toHaveLength(2);
@@ -161,7 +159,7 @@ describe('buildTree', () => {
         label: 'Reports',
         path: '/admin/reports',
         children: [],
-        meta: { parent: 'dashboard' }, // Explicit parent
+        meta: { parent: 'dashboard' },
         isActive: false,
         isExpanded: false,
       },
@@ -190,7 +188,6 @@ describe('buildTree', () => {
 
     const result = buildTree(items);
 
-    // Should still include orphan at root level
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('orphan');
   });

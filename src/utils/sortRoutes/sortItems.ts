@@ -26,10 +26,8 @@ export function sortItems(
 ): NavItem[] {
   const { sort = defaultSort } = options;
 
-  // Create a shallow copy to avoid mutation
   const sortedItems = [...items].sort(sort);
 
-  // Recursively sort children
   return sortedItems.map((item) => {
     if (item.children && item.children.length > 0) {
       return {
