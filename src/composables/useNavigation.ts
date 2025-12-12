@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable */
 import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
