@@ -1,6 +1,6 @@
 {
   "name": "vue-nav-schema",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "> Build reactive navigation schemas from Vue Router configuration",
   "scripts": {
     "build": "vite build && npm run build:types",
