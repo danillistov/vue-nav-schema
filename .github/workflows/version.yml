@@ -1,4 +1,4 @@
-name: Release
+name: Version & Changelog
 
 on:
   push:
@@ -9,10 +9,9 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
-  id-token: write
 
 jobs:
-  release:
+  version:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,7 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci
@@ -42,8 +40,7 @@ jobs:
       - name: Build package
         run: npm run build
 
-      - name: Release
+      - name: Update version and changelog
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
