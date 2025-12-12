@@ -17,14 +17,14 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/vue-nav-schema.umd.js",
-  "module": "./dist/vue-nav-schema.es.js",
+  "main": "./dist/vue-nav-schema.cjs",
+  "module": "./dist/vue-nav-schema.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/vue-nav-schema.es.js",
-      "require": "./dist/vue-nav-schema.umd.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/vue-nav-schema.mjs",
+      "require": "./dist/vue-nav-schema.cjs"
     }
   },
   "keywords": [
