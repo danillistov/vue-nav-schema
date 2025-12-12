@@ -45,10 +45,10 @@ describe('sortItems', () => {
   it('should sort items by order meta field', () => {
     const result = sortItems([...mockItems]);
 
-    expect(result[0].id).toBe('users'); // order: 1
-    expect(result[1].id).toBe('settings'); // order: 2
-    expect(result[2].id).toBe('dashboard'); // order: 3
-    expect(result[3].id).toBe('reports'); // no order (0)
+    expect(result[0].id).toBe('users');
+    expect(result[1].id).toBe('settings');
+    expect(result[2].id).toBe('dashboard');
+    expect(result[3].id).toBe('reports');
   });
 
   it('should put items without order at the end', () => {
@@ -62,7 +62,7 @@ describe('sortItems', () => {
       sort: (a, b) => a.label.localeCompare(b.label),
     });
 
-    expect(result[0].id).toBe('dashboard'); // alphabetically first
+    expect(result[0].id).toBe('dashboard');
     expect(result[1].id).toBe('reports');
     expect(result[2].id).toBe('settings');
     expect(result[3].id).toBe('users');
