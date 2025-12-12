@@ -70,5 +70,8 @@
   },
   "dependencies": {
     "es-toolkit": "^1.42.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
