@@ -1,0 +1,19 @@
+# This file defines the code owners for the repository
+# Each line is a file pattern followed by one or more owners
+
+# Default owner for everything in the repo
+* @danillistov
+
+# Specific ownership for different parts of the codebase
+/src/** @danillistov
+
+# Configuration files
+*.json @danillistov
+*.ts @danillistov
+*.mjs @danillistov
+
+# Documentation
+*.md @danillistov
+
+# CI/CD
+/.github/** @danillistov
