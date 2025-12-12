@@ -39,7 +39,7 @@
   },
   "author": "Danil Listov<https://github.com/danillistov>",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/danillistov/vue-nav-schema/issues"
   },
