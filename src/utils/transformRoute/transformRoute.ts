@@ -29,14 +29,31 @@ export function transformRoute(
 }
 
 function checkIsActive(route: RouteRecordNormalized, currentPath: string): boolean {
+  // Exact match
   if (currentPath === route.path) {
     return true;
   }
 
+  // Check if route has dynamic segments (contains :)
+  if (route.path.includes(':')) {
+    // Convert route pattern to regex
+    // /about/:id -> /about/[^/]+
+    const pattern = route.path
+      .replace(/:[^/]+/g, '[^/]+')
+      .replace(/\//g, '\\/');
+    const regex = new RegExp(`^${pattern}$`);
+
+    if (regex.test(currentPath)) {
+      return true;
+    }
+  }
+
+  // Check if current path is a child of this route
   if (currentPath.startsWith(route.path + '/')) {
     return true;
   }
 
+  // Check custom activeMatch from meta
   if (route.meta?.activeMatch) {
     const matcher = route.meta.activeMatch;
 

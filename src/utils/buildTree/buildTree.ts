@@ -24,24 +24,37 @@ export function buildTree(
 ): NavItem[] {
   const { usePathHierarchy = false } = options;
 
-  const clonedItems = items.map(item => ({ ...item, children: [] as NavItem[] }));
-  const itemMap = new Map(clonedItems.map(item => [item.id, item]));
+  // Create a map to track children for each item
+  const childrenMap = new Map<string, NavItem[]>();
+  const itemMap = new Map(items.map(item => [item.id, item]));
 
-  return clonedItems.filter((item) => {
-    const originalItem = items.find(i => i.id === item.id)!;
-    const parentId = originalItem.meta?.parent
-      ?? (usePathHierarchy && originalItem.path ? findParentByPath(originalItem.path, itemMap) : null);
+  // Initialize children arrays
+  items.forEach(item => {
+    childrenMap.set(item.id, []);
+  });
+
+  // Build parent-child relationships
+  const rootItems: NavItem[] = [];
+
+  items.forEach((item) => {
+    const parentId = item.meta?.parent
+      ?? (usePathHierarchy && item.path ? findParentByPath(item.path, itemMap) : null);
 
     if (parentId && itemMap.has(parentId)) {
-      const parent = itemMap.get(parentId)!;
-
-      parent.children!.push(item);
-
-      return false;
+      const children = childrenMap.get(parentId)!;
+      children.push(item);
+    } else {
+      rootItems.push(item);
     }
-
-    return true;
   });
+
+  // Assign children to items (mutating original items to preserve reactivity)
+  items.forEach(item => {
+    const children = childrenMap.get(item.id)!;
+    item.children = children;
+  });
+
+  return rootItems;
 }
 
 /**

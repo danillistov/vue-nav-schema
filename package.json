@@ -13,7 +13,8 @@
     "test:coverage": "vitest --coverage",
     "type-check": "tsc --noEmit",
     "prepare": "simple-git-hooks",
-    "prepublishOnly": "npm run test && npm run build"
+    "prepublishOnly": "npm run test && npm run build",
+    "example:basic": "cd examples/basic && npm install && npm run dev"
   },
   "files": [
     "dist"
