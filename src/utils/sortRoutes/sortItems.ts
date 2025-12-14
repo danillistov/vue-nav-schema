@@ -18,7 +18,7 @@ const defaultSort = (a: NavItem, b: NavItem): number => {
  * @param options - Sorting options
  * @param options.sort - Optional custom sort function
  *
- * @returns New sorted array of navigation items
+ * @returns Sorted array of navigation items (mutates children in place to preserve reactivity)
  */
 export function sortItems(
   items: NavItem[],
@@ -26,15 +26,15 @@ export function sortItems(
 ): NavItem[] {
   const { sort = defaultSort } = options;
 
+  // Sort the current level
   const sortedItems = [...items].sort(sort);
 
-  return sortedItems.map((item) => {
+  // Recursively sort children in place (mutating to preserve reactivity)
+  sortedItems.forEach((item) => {
     if (item.children && item.children.length > 0) {
-      return {
-        ...item,
-        children: sortItems(item.children, options),
-      };
+      item.children = sortItems(item.children, options);
     }
-    return item;
   });
+
+  return sortedItems;
 }

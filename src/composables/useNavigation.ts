@@ -16,13 +16,14 @@ export function useNavigation(options: NavigationOptions = {}) {
 
   const schema = computed<NavItem[]>(() => {
     const routes = router.getRoutes();
+    const currentPath = route.path; // Track route.path for reactivity
 
     const filteredRoutes = filterRoutes(routes, {
       filter: options.filter,
     });
 
     const items = filteredRoutes.map((r) =>
-      transformRoute(r, { currentPath: route.path }),
+      transformRoute(r, { currentPath }),
     );
 
     const tree = buildTree(items, {
@@ -32,6 +33,22 @@ export function useNavigation(options: NavigationOptions = {}) {
     const sorted = sortItems(tree, {
       sort: options.sort,
     });
+
+    // Update isActive for all items recursively when route changes
+    const updateIsActive = (items: NavItem[]): void => {
+      items.forEach((item) => {
+        if (item.path) {
+          const active = isActive(item.path);
+          item.isActive = active;
+        }
+
+        if (item.children && item.children.length > 0) {
+          updateIsActive(item.children);
+        }
+      });
+    };
+
+    updateIsActive(sorted);
 
     return sorted;
   });
@@ -71,7 +88,33 @@ export function useNavigation(options: NavigationOptions = {}) {
   };
 
   const isActive = (path: string): boolean => {
-    return route.path === path || route.path.startsWith(path + '/');
+    const currentPath = route.path;
+
+    // Exact match
+    if (currentPath === path) {
+      return true;
+    }
+
+    // Check if path has dynamic segments (contains :)
+    if (path.includes(':')) {
+      // Convert route pattern to regex
+      // /about/:id -> /about/[^/]+
+      const pattern = path
+        .replace(/:[^/]+/g, '[^/]+')
+        .replace(/\//g, '\\/');
+      const regex = new RegExp(`^${pattern}$`);
+
+      if (regex.test(currentPath)) {
+        return true;
+      }
+    }
+
+    // Check if current path is a child of this route
+    if (currentPath.startsWith(path + '/')) {
+      return true;
+    }
+
+    return false;
   };
 
   return {
