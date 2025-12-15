@@ -5,6 +5,9 @@ import { filterRoutes } from '@/utils/filterRoutes/filterRoutes';
 import { transformRoute } from '@/utils/transformRoute/transformRoute';
 import { buildTree } from '@/utils/buildTree/buildTree';
 import { sortItems } from '@/utils/sortRoutes/sortItems';
+import { checkIsActive } from '@/utils/checkIsActive/checkIsActive';
+import { updateIsActive } from '@/utils/updateIsActive/updateIsActive';
+import { flattenNavItems } from '@/utils/flattenNavItems/flattenNavItems';
 
 export function useNavigation(options: NavigationOptions = {}) {
   const defaultOptions: NavigationOptions = {
@@ -16,7 +19,7 @@ export function useNavigation(options: NavigationOptions = {}) {
 
   const schema = computed<NavItem[]>(() => {
     const routes = router.getRoutes();
-    const currentPath = route.path; // Track route.path for reactivity
+    const currentPath = route.path;
 
     const filteredRoutes = filterRoutes(routes, {
       filter: options.filter,
@@ -34,39 +37,13 @@ export function useNavigation(options: NavigationOptions = {}) {
       sort: options.sort,
     });
 
-    // Update isActive for all items recursively when route changes
-    const updateIsActive = (items: NavItem[]): void => {
-      items.forEach((item) => {
-        if (item.path) {
-          const active = isActive(item.path);
-          item.isActive = active;
-        }
-
-        if (item.children && item.children.length > 0) {
-          updateIsActive(item.children);
-        }
-      });
-    };
-
-    updateIsActive(sorted);
+    updateIsActive(sorted, currentPath);
 
     return sorted;
   });
 
   const flatSchema = computed<NavItem[]>(() => {
-    const flatten = (items: NavItem[]): NavItem[] => {
-      return items.reduce<NavItem[]>((acc, item) => {
-        acc.push(item);
-
-        if (item.children && item.children.length > 0) {
-          acc.push(...flatten(item.children));
-        }
-
-        return acc;
-      }, []);
-    };
-
-    return flatten(schema.value);
+    return flattenNavItems(schema.value);
   });
 
   const breadcrumbs = computed<NavItem[]>(() => {
@@ -88,33 +65,7 @@ export function useNavigation(options: NavigationOptions = {}) {
   };
 
   const isActive = (path: string): boolean => {
-    const currentPath = route.path;
-
-    // Exact match
-    if (currentPath === path) {
-      return true;
-    }
-
-    // Check if path has dynamic segments (contains :)
-    if (path.includes(':')) {
-      // Convert route pattern to regex
-      // /about/:id -> /about/[^/]+
-      const pattern = path
-        .replace(/:[^/]+/g, '[^/]+')
-        .replace(/\//g, '\\/');
-      const regex = new RegExp(`^${pattern}$`);
-
-      if (regex.test(currentPath)) {
-        return true;
-      }
-    }
-
-    // Check if current path is a child of this route
-    if (currentPath.startsWith(path + '/')) {
-      return true;
-    }
-
-    return false;
+    return checkIsActive(path, route.path);
   };
 
   return {

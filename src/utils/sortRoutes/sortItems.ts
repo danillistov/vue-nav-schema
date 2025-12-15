@@ -26,10 +26,8 @@ export function sortItems(
 ): NavItem[] {
   const { sort = defaultSort } = options;
 
-  // Sort the current level
   const sortedItems = [...items].sort(sort);
 
-  // Recursively sort children in place (mutating to preserve reactivity)
   sortedItems.forEach((item) => {
     if (item.children && item.children.length > 0) {
       item.children = sortItems(item.children, options);
