@@ -24,16 +24,13 @@ export function buildTree(
 ): NavItem[] {
   const { usePathHierarchy = false } = options;
 
-  // Create a map to track children for each item
   const childrenMap = new Map<string, NavItem[]>();
   const itemMap = new Map(items.map(item => [item.id, item]));
 
-  // Initialize children arrays
   items.forEach(item => {
     childrenMap.set(item.id, []);
   });
 
-  // Build parent-child relationships
   const rootItems: NavItem[] = [];
 
   items.forEach((item) => {
@@ -48,7 +45,6 @@ export function buildTree(
     }
   });
 
-  // Assign children to items (mutating original items to preserve reactivity)
   items.forEach(item => {
     const children = childrenMap.get(item.id)!;
     item.children = children;

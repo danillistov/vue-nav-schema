@@ -1,6 +1,6 @@
 import type { RouteRecordNormalized } from 'vue-router';
 import type { NavItem } from '@/types';
-import { isString, isRegExp } from 'es-toolkit/predicate';
+import { checkRouteIsActive } from '@/utils/checkIsActive/checkIsActive';
 
 export interface TransformRouteOptions {
   currentPath?: string;
@@ -13,7 +13,7 @@ export function transformRoute(
 ): NavItem {
   const { currentPath, isExpanded = false } = options;
 
-  const isActive = currentPath ? checkIsActive(route, currentPath) : false;
+  const isActive = currentPath ? checkRouteIsActive(route, currentPath) : false;
 
   return {
     id: route.name as string,
@@ -26,45 +26,4 @@ export function transformRoute(
     isActive,
     isExpanded,
   };
-}
-
-function checkIsActive(route: RouteRecordNormalized, currentPath: string): boolean {
-  // Exact match
-  if (currentPath === route.path) {
-    return true;
-  }
-
-  // Check if route has dynamic segments (contains :)
-  if (route.path.includes(':')) {
-    // Convert route pattern to regex
-    // /about/:id -> /about/[^/]+
-    const pattern = route.path
-      .replace(/:[^/]+/g, '[^/]+')
-      .replace(/\//g, '\\/');
-    const regex = new RegExp(`^${pattern}$`);
-
-    if (regex.test(currentPath)) {
-      return true;
-    }
-  }
-
-  // Check if current path is a child of this route
-  if (currentPath.startsWith(route.path + '/')) {
-    return true;
-  }
-
-  // Check custom activeMatch from meta
-  if (route.meta?.activeMatch) {
-    const matcher = route.meta.activeMatch;
-
-    if (isString(matcher)) {
-      return currentPath.includes(matcher);
-    }
-
-    if (isRegExp(matcher)) {
-      return matcher.test(currentPath);
-    }
-  }
-
-  return false;
 }
