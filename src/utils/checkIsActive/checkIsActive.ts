@@ -1,5 +1,28 @@
 import type { RouteRecordNormalized } from 'vue-router';
 import { isString, isRegExp } from 'es-toolkit/predicate';
+import { matchesDynamicPattern } from '@/helpers/pathPatternHelpers';
+
+/**
+ * Checks if the current path matches the activeMatch pattern from route meta.
+ */
+function matchesActiveMatch(activeMatch: string | RegExp, currentPath: string): boolean {
+  if (isString(activeMatch)) {
+    return currentPath.includes(activeMatch);
+  }
+
+  if (isRegExp(activeMatch)) {
+    return activeMatch.test(currentPath);
+  }
+
+  return false;
+}
+
+/**
+ * Checks if the current path is a child of the given path pattern.
+ */
+function isChildPath(pathPattern: string, currentPath: string): boolean {
+  return currentPath.startsWith(pathPattern + '/');
+}
 
 /**
  * Check if a path pattern matches the current path.
@@ -14,43 +37,20 @@ export function checkIsActive(
   pathPattern: string,
   currentPath: string,
   activeMatch?: string | RegExp,
-): boolean {
-  // Exact match
+) {
   if (currentPath === pathPattern) {
     return true;
   }
 
-  // Check if path has dynamic segments (contains :)
-  if (pathPattern.includes(':')) {
-    // Convert route pattern to regex
-    // /about/:id -> /about/[^/]+
-    const pattern = pathPattern
-      .replace(/:[^/]+/g, '[^/]+')
-      .replace(/\//g, '\\/');
-    const regex = new RegExp(`^${pattern}$`);
-
-    if (regex.test(currentPath)) {
-      return true;
-    }
-  }
-
-  // Check if current path is a child of this route
-  if (currentPath.startsWith(pathPattern + '/')) {
+  if (activeMatch && matchesActiveMatch(activeMatch, currentPath)) {
     return true;
   }
 
-  // Check custom activeMatch from meta
-  if (activeMatch) {
-    if (isString(activeMatch)) {
-      return currentPath.includes(activeMatch);
-    }
-
-    if (isRegExp(activeMatch)) {
-      return activeMatch.test(currentPath);
-    }
+  if (pathPattern.includes(':')) {
+    return matchesDynamicPattern(pathPattern, currentPath);
   }
 
-  return false;
+  return isChildPath(pathPattern, currentPath);
 }
 
 /**
@@ -63,7 +63,7 @@ export function checkIsActive(
 export function checkRouteIsActive(
   route: RouteRecordNormalized,
   currentPath: string,
-): boolean {
+) {
   return checkIsActive(
     route.path,
     currentPath,

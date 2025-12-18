@@ -1,7 +1,7 @@
-import type { RouteRecordNormalized, Router, RouteLocationNormalizedLoaded } from 'vue-router';
+import type { RouteRecordNormalized, Router, RouteLocationNormalizedLoaded, RouteParamsGeneric } from 'vue-router';
 
 export interface NavigationMeta {
-  title?: string;
+  title?: string | ((params: RouteParamsGeneric) => string);
   icon?: string;
   order?: number;
   hidden?: boolean;
@@ -25,6 +25,10 @@ export interface NavItem {
   isActive?: boolean;
   isExpanded?: boolean;
 }
+
+export type Breadcrumb = Pick<NavItem, 'id' | 'path' | 'label'> & { current: boolean };
+
+export type Breadcrumbs = Breadcrumb[];
 
 export interface NavigationOptions {
   router?: Router;

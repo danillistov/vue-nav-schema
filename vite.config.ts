@@ -8,6 +8,7 @@ export default defineConfig({
       '@/types': resolve(__dirname, './src/types'),
       '@/utils': resolve(__dirname, './src/utils'),
       '@/composables': resolve(__dirname, './src/composables'),
+      '@/helpers': resolve(__dirname, './src/helpers'),
     },
   },
   build: {
