@@ -55,9 +55,14 @@ const mockRoutes: RouteRecordRaw[] = [
   },
 ];
 
-function createMockRouter(routes: RouteRecordRaw[]): Router {
+function createMockRouter(routes: RouteRecordRaw[], currentPath = '/'): Router {
   return {
     getRoutes: () => routes as any,
+    currentRoute: {
+      value: {
+        path: currentPath,
+      },
+    },
   } as Router;
 }
 
@@ -80,7 +85,7 @@ describe('useNavigation', () => {
   let mockRoute: RouteLocationNormalizedLoaded;
 
   beforeEach(() => {
-    mockRouter = createMockRouter(mockRoutes);
+    mockRouter = createMockRouter(mockRoutes, '/dashboard');
     mockRoute = createMockRoute('/dashboard');
   });
 
@@ -138,8 +143,9 @@ describe('useNavigation', () => {
   });
 
   it('should mark parent as active when on child route', () => {
+    const testRouter = createMockRouter(mockRoutes, '/users/list');
     const { schema } = useNavigation({
-      router: mockRouter,
+      router: testRouter,
       route: createMockRoute('/users/list'),
     });
 

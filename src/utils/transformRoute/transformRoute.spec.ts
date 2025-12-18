@@ -1,6 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { transformRoute } from './transformRoute';
-import type { RouteRecordNormalized } from 'vue-router';
+import type { RouteRecordNormalized, Router, RouteParamsGeneric } from 'vue-router';
+
+function createMockRouter(currentPath = '/', params = {}): Router {
+  return {
+    currentRoute: {
+      value: {
+        path: currentPath,
+        params,
+      },
+    },
+  } as Router;
+}
 
 describe('transformRoute', () => {
   it('should transform basic route to NavItem', () => {
@@ -14,7 +25,8 @@ describe('transformRoute', () => {
       },
     };
 
-    const result = transformRoute(route as RouteRecordNormalized);
+    const router = createMockRouter('/');
+    const result = transformRoute(route as RouteRecordNormalized, router);
 
     expect(result).toEqual({
       id: 'dashboard',
@@ -40,7 +52,8 @@ describe('transformRoute', () => {
       meta: {},
     };
 
-    const result = transformRoute(route as RouteRecordNormalized);
+    const router = createMockRouter('/');
+    const result = transformRoute(route as RouteRecordNormalized, router);
 
     expect(result.label).toBe('users');
   });
@@ -51,7 +64,8 @@ describe('transformRoute', () => {
       meta: {},
     };
 
-    const result = transformRoute(route as RouteRecordNormalized);
+    const router = createMockRouter('/');
+    const result = transformRoute(route as RouteRecordNormalized, router);
 
     expect(result.label).toBe('/about');
   });
@@ -66,7 +80,8 @@ describe('transformRoute', () => {
       },
     };
 
-    const result = transformRoute(route as RouteRecordNormalized);
+    const router = createMockRouter('/');
+    const result = transformRoute(route as RouteRecordNormalized, router);
 
     expect(result.badge).toBe(5);
   });
@@ -78,9 +93,8 @@ describe('transformRoute', () => {
       meta: {},
     };
 
-    const result = transformRoute(route as RouteRecordNormalized, {
-      currentPath: '/dashboard',
-    });
+    const router = createMockRouter('/dashboard');
+    const result = transformRoute(route as RouteRecordNormalized, router);
 
     expect(result.isActive).toBe(true);
   });
@@ -92,9 +106,8 @@ describe('transformRoute', () => {
       meta: {},
     };
 
-    const result = transformRoute(route as RouteRecordNormalized, {
-      currentPath: '/users/list',
-    });
+    const router = createMockRouter('/users/list');
+    const result = transformRoute(route as RouteRecordNormalized, router);
 
     expect(result.isActive).toBe(true);
   });
@@ -106,9 +119,8 @@ describe('transformRoute', () => {
       meta: {},
     };
 
-    const result = transformRoute(route as RouteRecordNormalized, {
-      currentPath: '/dashboard',
-    });
+    const router = createMockRouter('/dashboard');
+    const result = transformRoute(route as RouteRecordNormalized, router);
 
     expect(result.isActive).toBe(false);
   });
@@ -122,9 +134,8 @@ describe('transformRoute', () => {
       },
     };
 
-    const result = transformRoute(route as RouteRecordNormalized, {
-      currentPath: '/dashboard/analytics',
-    });
+    const router = createMockRouter('/dashboard/analytics');
+    const result = transformRoute(route as RouteRecordNormalized, router);
 
     expect(result.isActive).toBe(true);
   });
@@ -138,9 +149,8 @@ describe('transformRoute', () => {
       },
     };
 
-    const result = transformRoute(route as RouteRecordNormalized, {
-      currentPath: '/admin/users/edit',
-    });
+    const router = createMockRouter('/admin/users/edit');
+    const result = transformRoute(route as RouteRecordNormalized, router);
 
     expect(result.isActive).toBe(true);
   });
@@ -152,10 +162,44 @@ describe('transformRoute', () => {
       meta: {},
     };
 
-    const result = transformRoute(route as RouteRecordNormalized, {
+    const router = createMockRouter('/');
+    const result = transformRoute(route as RouteRecordNormalized, router, {
       isExpanded: true,
     });
 
     expect(result.isExpanded).toBe(true);
+  });
+
+  it('should handle title as function with route params', () => {
+    const route: Partial<RouteRecordNormalized> = {
+      name: 'user-detail',
+      path: '/users/:id',
+      meta: {
+        title: (params: RouteParamsGeneric) => `User ${params.id}`,
+      },
+    };
+
+    const router = createMockRouter('/users/123', { id: '123' });
+    const result = transformRoute(route as RouteRecordNormalized, router);
+
+    expect(result.label).toBe('User 123');
+  });
+
+  it('should handle title as function with multiple params', () => {
+    const route: Partial<RouteRecordNormalized> = {
+      name: 'post-comment',
+      path: '/posts/:postId/comments/:commentId',
+      meta: {
+        title: (params: RouteParamsGeneric) => `Post ${params.postId} - Comment ${params.commentId}`,
+      },
+    };
+
+    const router = createMockRouter('/posts/42/comments/99', {
+      postId: '42',
+      commentId: '99',
+    });
+    const result = transformRoute(route as RouteRecordNormalized, router);
+
+    expect(result.label).toBe('Post 42 - Comment 99');
   });
 });

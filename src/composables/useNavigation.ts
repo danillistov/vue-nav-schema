@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import type { NavigationOptions, NavItem } from '../types';
+import type { Breadcrumbs, NavigationOptions, NavItem } from '../types';
 import { filterRoutes } from '@/utils/filterRoutes/filterRoutes';
 import { transformRoute } from '@/utils/transformRoute/transformRoute';
 import { buildTree } from '@/utils/buildTree/buildTree';
@@ -8,6 +8,7 @@ import { sortItems } from '@/utils/sortRoutes/sortItems';
 import { checkIsActive } from '@/utils/checkIsActive/checkIsActive';
 import { updateIsActive } from '@/utils/updateIsActive/updateIsActive';
 import { flattenNavItems } from '@/utils/flattenNavItems/flattenNavItems';
+import { buildBreadcrumbs } from '@/utils/buildBreadcrumbs/buildBreadcrumbs';
 
 export function useNavigation(options: NavigationOptions = {}) {
   const defaultOptions: NavigationOptions = {
@@ -19,14 +20,13 @@ export function useNavigation(options: NavigationOptions = {}) {
 
   const schema = computed<NavItem[]>(() => {
     const routes = router.getRoutes();
-    const currentPath = route.path;
 
     const filteredRoutes = filterRoutes(routes, {
       filter: options.filter,
     });
 
-    const items = filteredRoutes.map((r) =>
-      transformRoute(r, { currentPath }),
+    const items = filteredRoutes.map((route) =>
+      transformRoute(route, router),
     );
 
     const tree = buildTree(items, {
@@ -37,7 +37,7 @@ export function useNavigation(options: NavigationOptions = {}) {
       sort: options.sort,
     });
 
-    updateIsActive(sorted, currentPath);
+    updateIsActive(sorted, router);
 
     return sorted;
   });
@@ -46,9 +46,8 @@ export function useNavigation(options: NavigationOptions = {}) {
     return flattenNavItems(schema.value);
   });
 
-  const breadcrumbs = computed<NavItem[]>(() => {
-    // TODO: Implement breadcrumbs
-    return [];
+  const breadcrumbs = computed<Breadcrumbs>(() => {
+    return buildBreadcrumbs(flatSchema.value, router);
   });
 
   const groupedSchema = computed<Record<string, NavItem[]>>(() => {
@@ -64,7 +63,7 @@ export function useNavigation(options: NavigationOptions = {}) {
     return flatSchema.value.find((item) => item.path === path);
   };
 
-  const isActive = (path: string): boolean => {
+  const isActive = (path: string) => {
     return checkIsActive(path, route.path);
   };
 

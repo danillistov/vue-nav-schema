@@ -1,5 +1,6 @@
 import type { NavItem } from '@/types';
 import { checkIsActive } from '@/utils/checkIsActive/checkIsActive';
+import { Router } from 'vue-router';
 
 /**
  * Recursively updates the isActive property for all navigation items
@@ -8,9 +9,11 @@ import { checkIsActive } from '@/utils/checkIsActive/checkIsActive';
  * This function mutates the items in place to preserve reactivity.
  *
  * @param items - Array of navigation items to update
- * @param currentPath - The current path to check against
+ * @param router - Vue Router instance to get the current path from
  */
-export function updateIsActive(items: NavItem[], currentPath: string): void {
+export function updateIsActive(items: NavItem[], router: Router): void {
+  const { path: currentPath } = router.currentRoute.value;
+
   items.forEach((item) => {
     if (item.path) {
       item.isActive = checkIsActive(
@@ -21,7 +24,7 @@ export function updateIsActive(items: NavItem[], currentPath: string): void {
     }
 
     if (item.children && item.children.length > 0) {
-      updateIsActive(item.children, currentPath);
+      updateIsActive(item.children, router);
     }
   });
 }
