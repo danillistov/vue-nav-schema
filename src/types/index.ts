@@ -30,6 +30,8 @@ export type Breadcrumb = Pick<NavItem, 'id' | 'path' | 'label'> & { current: boo
 
 export type Breadcrumbs = Breadcrumb[];
 
+export type GroupedSchema = Record<string, NavItem[]>;
+
 export interface NavigationOptions {
   router?: Router;
   route?: RouteLocationNormalizedLoaded;

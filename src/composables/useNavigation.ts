@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import type { Breadcrumbs, NavigationOptions, NavItem } from '../types';
+import type { Breadcrumbs, NavigationOptions, NavItem, GroupedSchema } from '../types';
 import { filterRoutes } from '@/utils/filterRoutes/filterRoutes';
 import { transformRoute } from '@/utils/transformRoute/transformRoute';
 import { buildTree } from '@/utils/buildTree/buildTree';
@@ -9,6 +9,7 @@ import { checkIsActive } from '@/utils/checkIsActive/checkIsActive';
 import { updateIsActive } from '@/utils/updateIsActive/updateIsActive';
 import { flattenNavItems } from '@/utils/flattenNavItems/flattenNavItems';
 import { buildBreadcrumbs } from '@/utils/buildBreadcrumbs/buildBreadcrumbs';
+import { buildGroupedSchema } from '@/utils/buildGroupedSchema/buildGroupedSchema';
 
 export function useNavigation(options: NavigationOptions = {}) {
   const defaultOptions: NavigationOptions = {
@@ -50,9 +51,10 @@ export function useNavigation(options: NavigationOptions = {}) {
     return buildBreadcrumbs(flatSchema.value, router);
   });
 
-  const groupedSchema = computed<Record<string, NavItem[]>>(() => {
-    // TODO: Implement grouped schema
-    return {};
+  const groupedSchema = computed<GroupedSchema>(() => {
+    return buildGroupedSchema(schema.value, {
+      groupBy: options.groupBy,
+    });
   });
 
   const findItem = (id: string): NavItem | undefined => {

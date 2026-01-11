@@ -229,4 +229,104 @@ describe('useNavigation', () => {
 
     route.value = createMockRoute('/users');
   });
+
+  it('should return empty grouped schema when groupBy is false', () => {
+    const { groupedSchema } = useNavigation({
+      router: mockRouter,
+      route: mockRoute,
+      groupBy: false,
+    });
+
+    expect(groupedSchema.value).toEqual({});
+  });
+
+  it('should group items by meta.group', () => {
+    const routesWithGroups: RouteRecordRaw[] = [
+      {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: {},
+        meta: {
+          title: 'Dashboard',
+          group: 'Main',
+        },
+      },
+      {
+        path: '/analytics',
+        name: 'analytics',
+        component: {},
+        meta: {
+          title: 'Analytics',
+          group: 'Main',
+        },
+      },
+      {
+        path: '/settings',
+        name: 'settings',
+        component: {},
+        meta: {
+          title: 'Settings',
+          group: 'System',
+        },
+      },
+    ];
+
+    const testRouter = createMockRouter(routesWithGroups);
+    const { groupedSchema } = useNavigation({
+      router: testRouter,
+      route: mockRoute,
+      groupBy: 'group',
+    });
+
+    expect(groupedSchema.value).toHaveProperty('Main');
+    expect(groupedSchema.value).toHaveProperty('System');
+    expect(groupedSchema.value.Main).toHaveLength(2);
+    expect(groupedSchema.value.System).toHaveLength(1);
+  });
+
+  it('should group items by meta.parent', () => {
+    const { groupedSchema } = useNavigation({
+      router: mockRouter,
+      route: mockRoute,
+      groupBy: 'parent',
+    });
+
+    expect(groupedSchema.value).toHaveProperty('users');
+    expect(groupedSchema.value.users).toHaveLength(2);
+    expect(groupedSchema.value.users[0].id).toBe('users-list');
+    expect(groupedSchema.value.users[1].id).toBe('users-create');
+  });
+
+  it('should use "Other" for ungrouped items', () => {
+    const routesWithGroups: RouteRecordRaw[] = [
+      {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: {},
+        meta: {
+          title: 'Dashboard',
+          group: 'Main',
+        },
+      },
+      {
+        path: '/about',
+        name: 'about',
+        component: {},
+        meta: {
+          title: 'About',
+        },
+      },
+    ];
+
+    const testRouter = createMockRouter(routesWithGroups);
+    const { groupedSchema } = useNavigation({
+      router: testRouter,
+      route: mockRoute,
+      groupBy: 'group',
+    });
+
+    expect(groupedSchema.value).toHaveProperty('Other');
+    expect(groupedSchema.value.Other).toHaveLength(1);
+    expect(groupedSchema.value.Other[0].id).toBe('about');
+  });
 });
