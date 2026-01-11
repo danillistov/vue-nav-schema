@@ -40,4 +40,6 @@ export interface NavigationOptions {
   maxDepth?: number;
   flatMode?: boolean;
   groupBy?: 'group' | 'parent' | false;
+  onError?: (error: Error) => void;
+  validateSchema?: boolean;
 }
