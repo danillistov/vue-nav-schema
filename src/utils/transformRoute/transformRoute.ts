@@ -1,10 +1,13 @@
 import type { Router, RouteRecordNormalized, RouteParams } from 'vue-router';
 import type { NavItem } from '@/types';
 import { checkRouteIsActive } from '@/utils/checkIsActive/checkIsActive';
+import { validateRoute, InvalidRouteError, safeExecute } from '@/errors';
 
 export interface TransformRouteOptions {
   currentPath?: string;
   isExpanded?: boolean;
+  validateRoute?: boolean;
+  onError?: (error: Error) => void;
 }
 
 /**
@@ -12,16 +15,41 @@ export interface TransformRouteOptions {
  *
  * @param route - The route to get the label from
  * @param params - Current route parameters for dynamic title functions
+ * @param onError - Error handler for title function errors
  * @returns The resolved label string
  */
-function resolveRouteLabel(route: RouteRecordNormalized, params: RouteParams): string {
+function resolveRouteLabel(
+  route: RouteRecordNormalized,
+  params: RouteParams,
+  onError?: (error: Error) => void,
+): string {
   const metaTitle = route.meta?.title;
 
+  const name = route.name ? String(route.name) : route.path;
+  console.log(name);
+
   if (typeof metaTitle === 'function') {
-    return metaTitle(params);
+    return safeExecute(
+      () => metaTitle(params),
+      name,
+      (error) => {
+        if (onError) {
+          onError(
+            new InvalidRouteError(
+              `Error executing title function for route "${name}": ${error.message}`,
+              {
+                routeName: route.name,
+                routePath: route.path,
+                originalError: error.message,
+              },
+            ),
+          );
+        }
+      },
+    );
   }
 
-  return (metaTitle as string) || (route.name as string) || route.path;
+  return (metaTitle as string) || name;
 }
 
 /**
@@ -31,20 +59,30 @@ function resolveRouteLabel(route: RouteRecordNormalized, params: RouteParams): s
  * @param router - Vue Router instance to get the current path from
  * @param options - Optional configuration for the transformation
  * @returns A NavItem representing the route
+ * @throws {InvalidRouteError} If route validation fails
  */
 export function transformRoute(
   route: RouteRecordNormalized,
   router: Router,
   options: TransformRouteOptions = {},
 ): NavItem {
-  const { isExpanded = false } = options;
+  const {
+    isExpanded = false,
+    validateRoute: shouldValidate = process.env.NODE_ENV !== 'production',
+    onError,
+  } = options;
+
+  if (shouldValidate) {
+    validateRoute(route);
+  }
+
   const { path: currentPath, params } = router.currentRoute.value;
 
   const isActive = currentPath ? checkRouteIsActive(route, currentPath) : false;
-  const label = resolveRouteLabel(route, params);
+  const label = resolveRouteLabel(route, params, onError);
 
   return {
-    id: route.name as string,
+    id: String(route.name),
     label,
     path: route.path,
     icon: route.meta?.icon as string | undefined,

@@ -6,4 +6,14 @@ export type {
   NavigationOptions,
   Breadcrumb,
   Breadcrumbs,
+  GroupedSchema,
 } from './types';
+
+export {
+  NavigationError,
+  InvalidSchemaError,
+  InvalidRouteError,
+  InvalidNavItemError,
+  CircularDependencyError,
+  ValidationError,
+} from './errors';
