@@ -4,9 +4,6 @@ import tseslint from 'typescript-eslint';
 import stylistic from '@stylistic/eslint-plugin';
 
 export default defineConfig([
-  {
-    ignores: ['dist/**', 'node_modules/**', '*.config.js', '*.config.mjs'],
-  },
   eslint.configs.recommended,
   tseslint.configs.recommended,
   tseslint.configs.stylistic,
@@ -14,6 +11,7 @@ export default defineConfig([
     plugins: {
       '@stylistic': stylistic,
     },
+	ignores: ['dist/**', 'node_modules/**', '*.config.js', '*.config.mjs'],
     rules: {
       "@typescript-eslint/no-explicit-any": 'warn',
       'curly': ['error', 'all'],
