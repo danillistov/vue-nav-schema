@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/danillistov/vue-nav-schema/compare/v1.0.0...v1.0.1) (2026-02-07)
+
+
+### Bug Fixes
+
+* update semantic-release package ([#19](https://github.com/danillistov/vue-nav-schema/issues/19)) ([25a76ee](https://github.com/danillistov/vue-nav-schema/commit/25a76ee19f34729705aba3241815a9cfe784be09))
+
 # 1.0.0 (2026-02-07)
 
 
