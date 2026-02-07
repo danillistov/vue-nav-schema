@@ -1,3 +1,21 @@
+# 1.0.0 (2026-02-07)
+
+
+### Bug Fixes
+
+* semantic release ([cc1df31](https://github.com/danillistov/vue-nav-schema/commit/cc1df310afe6e6506f65cdf0e47a79a6d47e8d17))
+* update semantic-release package ([#18](https://github.com/danillistov/vue-nav-schema/issues/18)) ([f5574a5](https://github.com/danillistov/vue-nav-schema/commit/f5574a54d9905e0b1a68e8f63d5e861278e8c4b7))
+
+
+### Features
+
+* base project initialization ([87f4abf](https://github.com/danillistov/vue-nav-schema/commit/87f4abf05284746c402f9f1d3fa8992f99466fe5))
+* ci/cd ([43d58e6](https://github.com/danillistov/vue-nav-schema/commit/43d58e6416c8b25e21f690e9cf348b4a79f0d71e))
+* gitignore extend ([39c9ccc](https://github.com/danillistov/vue-nav-schema/commit/39c9ccc6a27566b2c951e02674f7e60b28e24050))
+* initial release ([03c0e23](https://github.com/danillistov/vue-nav-schema/commit/03c0e23d86478af7caf816bd768401229bd7281e))
+* npm release false ([fac7d7b](https://github.com/danillistov/vue-nav-schema/commit/fac7d7b431ae81e8306554948b624875271a9c55))
+* pre-commit ([63d3744](https://github.com/danillistov/vue-nav-schema/commit/63d3744928e954d13652c10175a95fb21b5a544a))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
