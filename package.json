@@ -1,6 +1,6 @@
 {
   "name": "vue-nav-schema",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> Build reactive navigation schemas from Vue Router configuration",
   "scripts": {
     "build": "vite build && npm run build:types",
@@ -13,7 +13,8 @@
     "test:coverage": "vitest --coverage",
     "type-check": "tsc --noEmit",
     "prepare": "simple-git-hooks",
-    "prepublishOnly": "npm run test && npm run build"
+    "prepublishOnly": "npm run test && npm run build",
+    "example:basic": "cd examples/basic && npm install && npm run dev"
   },
   "files": [
     "dist"
@@ -53,6 +54,7 @@
     "@types/node": "^25.0.0",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
+    "@vitest/coverage-v8": "^4.0.15",
     "@vitest/ui": "^4.0.15",
     "@vue/test-utils": "^2.4.6",
     "eslint": "^9.39.1",
@@ -84,8 +86,8 @@
     "*.{js,ts,tsx,vue,md,json}": [
       "eslint --cache --fix"
     ],
-	"*.ts": [
-	  "vitest related --run"
-	]
+    "*.ts": [
+      "vitest related --run"
+    ]
   }
 }

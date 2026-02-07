@@ -1,14 +1,12 @@
-import type { RouteRecordNormalized, Router, RouteLocationNormalizedLoaded } from 'vue-router';
+import type { RouteRecordNormalized, Router, RouteLocationNormalizedLoaded, RouteParamsGeneric } from 'vue-router';
 
 export interface NavigationMeta {
-  title?: string;
+  title?: string | ((params: RouteParamsGeneric) => string);
   icon?: string;
   order?: number;
   hidden?: boolean;
   group?: string;
   parent?: string;
-  roles?: string[];
-  permissions?: string[];
   badge?: string | number;
   external?: boolean;
   target?: '_blank' | '_self';
@@ -28,14 +26,20 @@ export interface NavItem {
   isExpanded?: boolean;
 }
 
+export type Breadcrumb = Pick<NavItem, 'id' | 'path' | 'label'> & { current: boolean };
+
+export type Breadcrumbs = Breadcrumb[];
+
+export type GroupedSchema = Record<string, NavItem[]>;
+
 export interface NavigationOptions {
   router?: Router;
   route?: RouteLocationNormalizedLoaded;
   filter?: (route: RouteRecordNormalized) => boolean;
-  checkRole?: (roles: string[]) => boolean;
-  checkPermission?: (permissions: string[]) => boolean;
   sort?: (a: NavItem, b: NavItem) => number;
   maxDepth?: number;
   flatMode?: boolean;
   groupBy?: 'group' | 'parent' | false;
+  onError?: (error: Error) => void;
+  validateSchema?: boolean;
 }

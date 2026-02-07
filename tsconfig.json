@@ -14,9 +14,10 @@
       "@/*": ["./src/*"],
       "@/types": ["./src/types"],
       "@/utils": ["./src/utils"],
-      "@/composables": ["./src/composables"]
+      "@/composables": ["./src/composables"],
+	  "@/helpers": ["./src/helpers"]
     }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "exclude": ["node_modules", "dist"]
 }
