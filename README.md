@@ -1,5 +1,8 @@
 # vue-nav-schema
 
+[![npm version](https://img.shields.io/npm/v/vue-nav-schema.svg)](https://www.npmjs.com/package/vue-nav-schema)
+[![license](https://img.shields.io/npm/l/vue-nav-schema.svg)](https://github.com/danillistov/vue-nav-schema/blob/main/LICENSE)
+
 > Build reactive navigation schemas from Vue Router configuration
 
 Transform your Vue Router setup into a type-safe, reactive navigation structure with minimal configuration.
